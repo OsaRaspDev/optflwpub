@@ -22,13 +22,13 @@ def main():
  
     for i in range(15):
     
-        img
+        gray
       
-        found, corner = cv2.findChessboardCorners(img, pattern_size)
+        found, corner = cv2.findChessboardCorners(gray, pattern_size)
         # コーナーがあれば
         if found:
             term = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_COUNT, 30, 0.1)
-            corners2 = cv2.cornerSubPix(im, corner, (5,5), (-1,-1), term)
+            corners2 = cv2.cornerSubPix(gray, corner, (5,5), (-1,-1), term)
             # マークをつけて画像保存
             #img = cv2.drawChessboardCorners(im, pattern_size, corners2, found)
             #saveImgByTime(TMP_FOLDER_PATH, img)
