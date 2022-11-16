@@ -18,7 +18,20 @@ feature_params = {
     "blockSize": 12  # 
 }
 
+mapimg = np.full((200,200,3),255,dtype=np.uint8)
 
+
+def drawmapimg(c, mapimg, points_x,points_y)
+  for i in range(len(points_x)):
+        x = int( points_x[i] * math.cos(c) - points_y[i] * math.sin(c) + 100 )
+        y = int( points_x[i] * math.sin(c) + points_y[i] * math.cos(c) + 100 )
+        if x>0 and x<200 and y>0 and y<200:
+             mapimg = cv2.rectangle(mapimg,(x,y),(x+1,y+1),color=(0, 255, 0))
+                
+def init_mapimg
+    mapimg = np.full((200,200,3),255,dtype=np.uint8)
+    
+    
 color = np.random.randint(0, 255, (200, 3))
 # VideoCapture オブジェクトを取得します
 capture = cv2.VideoCapture(0)
@@ -27,11 +40,11 @@ ret, preframe = capture.read()
 pregray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
 px = Picarx()
-mapimg = np.full((200,200,3),255,dtype=np.uint8)
+
 
 
 px.set_camera_servo1_angle(0)
-count=0
+reflesh_count=0
 
 while(True):
 
@@ -59,25 +72,32 @@ while(True):
     identical_p0 = p0[status==1]
 
     putpixel=0
+    mv_sum=0
+    mv_avg=0
+    mv_count=0
     for i, (p1, p0) in enumerate(zip(identical_p1, identical_p0)):
         p1_x, p1_y = p1.astype(np.int).ravel()
         p0_x, p0_y = p0.astype(np.int).ravel()
         if p0_x > 260:
            if p0_x<480:
-              mv = p0_x - p1_x
+              mv       = p0_x - p1_x
+              mv_sum   = mv_sum + mv
+              mv_count = mv_count + 1
               mask = cv2.line(mask, (p1_x, p1_y), (p0_x, p0_y), color[1].tolist(), 2)
-              putpixel=1
               #frame = cv2.circle(frame, (p1_x, p1_y), 5, color[1].tolist(), -1)
-
-    if  putpixel==1:
-      if  mv < 100:
-         suitei = (mv) * distance / 496.386
-         print( mv )
+    
+    if mv_count == 0:
+        continue
+        
+    mv_avg = mv_sum / mv_count
+    if  mv_avg < 100:
+         suitei = (mv_avg) * distance / 496.386
+         print( mv_avg )
          c = c + math.atan( suitei / distance )
          print("c : ", c )
-         count=count+1
-         if count>100:
-              count=0
+         reflesh_count=count + 1
+         if reflesh_count>100:
+              reflesh_count=0
               mapimg = np.full((200,200,3),255,dtype=np.uint8)
          x = int( distance * math.sin(c)+100)
          y = int(-distance * math.cos(c)+100)
