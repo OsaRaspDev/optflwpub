@@ -19,16 +19,20 @@ feature_params = {
 }
 
 mapimg = np.full((200,200,3),255,dtype=np.uint8)
+points_x=[]
+points_y=[]
 
 
-def drawmapimg(c, mapimg, points_x,points_y)
+
+
+def drawmapimg(c, mapimg, points_x,points_y):
   for i in range(len(points_x)):
         x = int( points_x[i] * math.cos(c) - points_y[i] * math.sin(c) + 100 )
         y = int( points_x[i] * math.sin(c) + points_y[i] * math.cos(c) + 100 )
         if x>0 and x<200 and y>0 and y<200:
              mapimg = cv2.rectangle(mapimg,(x,y),(x+1,y+1),color=(0, 255, 0))
                 
-def init_mapimg
+def init_mapimg:
     mapimg = np.full((200,200,3),255,dtype=np.uint8)
     
     
@@ -45,6 +49,13 @@ px = Picarx()
 
 px.set_camera_servo1_angle(0)
 reflesh_count=0
+
+
+#from robot_hat import Pin
+#user_button = Pin(19)
+#if (user_button == 0):
+#　　print("user_button pressed")
+
 
 while(True):
 
@@ -71,6 +82,7 @@ while(True):
     identical_p1 = p1[status==1]
     identical_p0 = p0[status==1]
 
+       
     putpixel=0
     mv_sum=0
     mv_avg=0
@@ -90,19 +102,22 @@ while(True):
         continue
         
     mv_avg = mv_sum / mv_count
-    if  mv_avg < 100:
+    print( mv_avg )
+    if  mv_avg < 200:
          suitei = (mv_avg) * distance / 496.386
-         print( mv_avg )
          c = c + math.atan( suitei / distance )
          print("c : ", c )
          reflesh_count=count + 1
          if reflesh_count>100:
               reflesh_count=0
               mapimg = np.full((200,200,3),255,dtype=np.uint8)
-         x = int( distance * math.sin(c)+100)
-         y = int(-distance * math.cos(c)+100)
-         if x>0 and x<200 and y>0 and y<200:
-             mapimg = cv2.rectangle(mapimg,(x,y),(x+1,y+1),color=(0, 255, 0))
+         x = points_x.append(  distance * math.sin(c) )
+         y = points_y.append( -distance * math.cos(c) )
+            
+         init_mapimg()
+         draw_mapimg(c, mapimg, points_x,points_y)
+         #if x>0 and x<200 and y>0 and y<200:
+         #    mapimg = cv2.rectangle(mapimg,(x,y),(x+1,y+1),color=(0, 255, 0))
 
     frame=cv2.add(frame,mask)
     cv2.imshow('frame',frame)
