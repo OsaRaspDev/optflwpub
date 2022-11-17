@@ -22,9 +22,6 @@ mapimg = np.full((200,200,3),255,dtype=np.uint8)
 points_x=[]
 points_y=[]
 
-
-
-
 def drawmapimg(c, mapimg, points_x,points_y):
   for i in range(len(points_x)):
         x = int( points_x[i] * math.cos(c) - points_y[i] * math.sin(c) + 100 )
@@ -111,17 +108,17 @@ while(True):
          if reflesh_count>100:
               reflesh_count=0
               mapimg = np.full((200,200,3),255,dtype=np.uint8)
-         x = points_x.append(  distance * math.sin(c) )
-         y = points_y.append( -distance * math.cos(c) )
+         x = points_x.append(  distance * math.sin(-c) )
+         y = points_y.append( -distance * math.cos(-c) )
             
          init_mapimg()
          draw_mapimg(c, mapimg, points_x,points_y)
          #if x>0 and x<200 and y>0 and y<200:
          #    mapimg = cv2.rectangle(mapimg,(x,y),(x+1,y+1),color=(0, 255, 0))
 
-    frame=cv2.add(frame,mask)
-    cv2.imshow('frame',frame)
-    cv2.imshow('map',mapimg)
+    frame=cv2.add(frame,mask )
+    cv2.imshow('frame',frame )
+    cv2.imshow('map',  mapimg)
     pregray = gray
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
