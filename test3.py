@@ -79,7 +79,6 @@ while(True):
     identical_p1 = p1[status==1]
     identical_p0 = p0[status==1]
 
-       
     putpixel=0
     mv_sum=0
     mv_avg=0
@@ -122,6 +121,14 @@ while(True):
     pregray = gray
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+        
+        
+   from robot_hat import Pin
+   user_button = Pin(19)
+   if (user_button == 0):
+      print("user_button pressed")
+        #https://github.com/sunfounder/robot-hat/blob/main/robot_hat/pin.py Richard 
+
 
 capture.release()
 cv2.destroyAllWindows()
