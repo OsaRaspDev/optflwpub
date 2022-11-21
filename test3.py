@@ -126,8 +126,7 @@ while(True):
    from robot_hat import Pin
    user_button = Pin(19)
    if (user_button == 0):
-      print("user_button pressed")
-        #https://github.com/sunfounder/robot-hat/blob/main/robot_hat/pin.py Richard 
+      print("user_button pressed")  #https://github.com/sunfounder/robot-hat/blob/main/robot_hat/pin.py
 
 
 capture.release()
