@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+import time
 
 from picarx import Picarx
 from robot_hat import Pin
@@ -37,7 +38,6 @@ def drawmapimg(c, mapimg, points_x,points_y):
 def init_mapimg:
     mapimg = np.full((200,200,3),255,dtype=np.uint8)
     
-    
 color = np.random.randint(0, 255, (200, 3))
 # VideoCapture オブジェクトを取得します
 capture = cv2.VideoCapture(0)
@@ -46,34 +46,17 @@ ret, preframe = capture.read()
 pregray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
 px = Picarx()
-
-
-
 px.set_camera_servo1_angle(0)
-reflesh_count=0
-
-
-#from robot_hat import Pin
-#user_button = Pin(19)
-#if (user_button == 0):
-#　　print("user_button pressed")
-
 
 while(True):
 
-
     distance = px.ultrasonic.read()
-
     ret, frame = capture.read()
 
     mask = np.zeros_like(preframe)
-    #mask = np.zeros_like(frame)
-
 
     gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-
     p0 = cv2.goodFeaturesToTrack(pregray, mask=None, **feature_params)
-
     p1, status, err = cv2.calcOpticalFlowPyrLK(pregray, gray, p0, None, **lk_params)
     
     #sift = cv2.xfeatures2d.SIFT_create()
@@ -84,15 +67,14 @@ while(True):
     identical_p1 = p1[status==1]
     identical_p0 = p0[status==1]
 
-    putpixel=0
-    mv_sum=0
-    mv_avg=0
-    mv_count=0
+    mv_sum   = 0
+    mv_avg   = 0
+    mv_count = 0
     for i, (p1, p0) in enumerate(zip(identical_p1, identical_p0)):
         p1_x, p1_y = p1.astype(np.int).ravel()
         p0_x, p0_y = p0.astype(np.int).ravel()
         if p0_x > 260:
-           if p0_x<480:
+           if p0_x < 480:
               mv       = p0_x - p1_x
               mv_sum   = mv_sum + mv
               mv_count = mv_count + 1
@@ -103,24 +85,18 @@ while(True):
         continue
         
     mv_avg = mv_sum / mv_count
-    print( mv_avg )
+    #print( mv_avg )
     if  mv_avg < 200:
          suitei = (mv_avg) * distance / 496.386
          c = c + math.atan( suitei / distance )
-         # print("c : ", c )
-         #reflesh_count=count + 1
-         #if reflesh_count > 100:
-         #     reflesh_count=0
-         #     mapimg = np.full((200,200,3),255,dtype=np.uint8)
+
          x = points_x.append(  distance * math.sin(-c) )
          y = points_y.append( -distance * math.cos(-c) )
-         #init_mapimg()
-         #draw_mapimg(c, mapimg, points_x,points_y)
          #if x>0 and x<200 and y>0 and y<200:
          #    mapimg = cv2.rectangle(mapimg,(x,y),(x+1,y+1),color=(0, 255, 0))
         
     drawmapimg(c, mapimg, points_x,points_y)
-    #frame=cv2.add(frame,mask )
+    frame=cv2.add(frame,mask )
     cv2.imshow('frame',frame )
     cv2.imshow('map',  mapimg)
     pregray = gray
@@ -128,17 +104,20 @@ while(True):
         break
    
    if (user_button == 0):
-      sleep(500)
-      #print("user_button pressed")  #https://github.com/sunfounder/robot-hat/blob/main/robot_hat/pin.py
+      time.sleep(0.5)
+      
       mode = 1 - mode
       if mode==0:
-          STOP!!
+          #STOP!!
+          px.forward(0)
       if mode==1:
         init_mapimg()
         c = 0
         points_x=[]
         points_y=[]
-        RUNRUNRUN!!
+        #RUNRUNRUN!!
+        px.set_motor_speed(1, 10)
+        px.set_motor_speed(2, -10)
         
 capture.release()
 cv2.destroyAllWindows()
