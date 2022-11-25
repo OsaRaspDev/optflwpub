@@ -3,8 +3,11 @@ import numpy as np
 import math
 
 from picarx import Picarx
+from robot_hat import Pin
 
+mode=0
 c=0
+
 lk_params = {
     "winSize": (15, 15),  # 特徴点の計算に使う周辺領域サイズ
     "maxLevel": 2,  # ピラミッド数 (デフォルト0で、2の場合は1/4の画像まで使われる)
@@ -21,6 +24,8 @@ feature_params = {
 mapimg = np.full((200,200,3),255,dtype=np.uint8)
 points_x=[]
 points_y=[]
+
+user_button = Pin(19)
 
 def drawmapimg(c, mapimg, points_x,points_y):
   for i in range(len(points_x)):
@@ -102,16 +107,15 @@ while(True):
     if  mv_avg < 200:
          suitei = (mv_avg) * distance / 496.386
          c = c + math.atan( suitei / distance )
-         print("c : ", c )
-         reflesh_count=count + 1
-         if reflesh_count>100:
-              reflesh_count=0
-              mapimg = np.full((200,200,3),255,dtype=np.uint8)
+         # print("c : ", c )
+         #reflesh_count=count + 1
+         #if reflesh_count > 100:
+         #     reflesh_count=0
+         #     mapimg = np.full((200,200,3),255,dtype=np.uint8)
          x = points_x.append(  distance * math.sin(-c) )
          y = points_y.append( -distance * math.cos(-c) )
-            
-         init_mapimg()
-         draw_mapimg(c, mapimg, points_x,points_y)
+         #init_mapimg()
+         #draw_mapimg(c, mapimg, points_x,points_y)
          #if x>0 and x<200 and y>0 and y<200:
          #    mapimg = cv2.rectangle(mapimg,(x,y),(x+1,y+1),color=(0, 255, 0))
 
@@ -121,13 +125,18 @@ while(True):
     pregray = gray
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-        
-        
-   from robot_hat import Pin
-   user_button = Pin(19)
+   
    if (user_button == 0):
-      print("user_button pressed")  #https://github.com/sunfounder/robot-hat/blob/main/robot_hat/pin.py
-
+      sleep(500)
+      #print("user_button pressed")  #https://github.com/sunfounder/robot-hat/blob/main/robot_hat/pin.py
+      mode = 1 - mode
+      if mode==0:
+          
+      if mode==1:
+        init_mapimg()
+        c = 0
+        points_x=[]
+        points_y=[]
 
 capture.release()
 cv2.destroyAllWindows()
