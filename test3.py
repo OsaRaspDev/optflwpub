@@ -125,6 +125,7 @@ while(True):
         time.sleep(0.5)
         px.set_motor_speed(1, 0)
         px.set_motor_speed(2, 0)
+        time.sleep(0.2)
         
 capture.release()
 cv2.destroyAllWindows()
