@@ -8,6 +8,7 @@ from robot_hat import Pin
 
 mode=0
 c=0
+firstdraw=1
 
 lk_params = {
     "winSize": (15, 15),  # 特徴点の計算に使う周辺領域サイズ
@@ -110,14 +111,20 @@ while(True):
       if mode==0:
           #STOP!!
           px.forward(0)
+          firstdraw = 1
       if mode==1:
-        init_mapimg()
-        c = 0
-        points_x=[]
-        points_y=[]
+        if firstdraw==1:
+            init_mapimg()
+            firstdraw = 0
+            c = 0
+            points_x=[]
+            points_y=[]
         #RUNRUNRUN!!
         px.set_motor_speed(1, 10)
         px.set_motor_speed(2, -10)
+        time.sleep(0.5)
+        px.set_motor_speed(1, 0)
+        px.set_motor_speed(2, 0)
         
 capture.release()
 cv2.destroyAllWindows()
