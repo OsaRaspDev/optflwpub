@@ -118,8 +118,9 @@ while(True):
          #draw_mapimg(c, mapimg, points_x,points_y)
          #if x>0 and x<200 and y>0 and y<200:
          #    mapimg = cv2.rectangle(mapimg,(x,y),(x+1,y+1),color=(0, 255, 0))
-
-    frame=cv2.add(frame,mask )
+        
+    drawmapimg(c, mapimg, points_x,points_y)
+    #frame=cv2.add(frame,mask )
     cv2.imshow('frame',frame )
     cv2.imshow('map',  mapimg)
     pregray = gray
@@ -131,12 +132,13 @@ while(True):
       #print("user_button pressed")  #https://github.com/sunfounder/robot-hat/blob/main/robot_hat/pin.py
       mode = 1 - mode
       if mode==0:
-          
+          STOP!!
       if mode==1:
         init_mapimg()
         c = 0
         points_x=[]
         points_y=[]
-
+        RUNRUNRUN!!
+        
 capture.release()
 cv2.destroyAllWindows()
